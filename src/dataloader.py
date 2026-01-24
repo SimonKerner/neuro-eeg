@@ -7,10 +7,16 @@ import mne
 # --------------------------------------------------
 # NeuroGPT 22 selected channel
 # --------------------------------------------------
+#NEUROGPT_CHANNELS = [
+#    "Fp1","Fp2","F7","F3","Fz","F4","F8",
+#    "T1","T3","C3","Cz","C4","T4","T2",
+#    "T5","P3","Pz","P4","T6","O1","Oz","O2"
+#]
+
+# Replace your current list with this specific order:
 NEUROGPT_CHANNELS = [
-    "Fp1","Fp2","F7","F3","Fz","F4","F8",
-    "T1","T3","C3","Cz","C4","T4","T2",
-    "T5","P3","Pz","P4","T6","O1","Oz","O2"
+    "Fz", "FC3", "FC1", "FCz", "FC2", "FC4", "C5", "C3", "C1", "Cz", 
+    "C2", "C4", "C6", "CP3", "CP1", "CPz", "CP2", "CP4", "P1", "Pz", "P2", "POz"
 ]
 
 # --------------------------------------------------
