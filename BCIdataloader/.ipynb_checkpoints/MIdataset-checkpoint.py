@@ -173,10 +173,9 @@ class MotorImageryDataset(EEGDataset):
         for fn in self.filenames:
             self.data_all.append(np.load(fn))
 
-        self.mi_types = {769: 'left', 770: 'right',
-                         771: 'foot', 772: 'tongue'} # Types of motor imagery
-        self.labels_string2int = {'left': 0, 'right': 1,
-                         'foot': 2, 'tongue':3 } # Map each class to an index
+        self.mi_types = {769: 'left', 770: 'right'}
+        self.labels_string2int = {'left': 0, 'right': 1}
+
         self.Fs = 250  # Sampling frequency 250Hz from original paper
 
         self.P = np.load(os.path.join("/".join(root_path.split('/')[:-2]),'NeuroGPT_mini/tMatrix_value.npy')) # Projection matrixi to align the dataset channels with model inputs
@@ -211,23 +210,19 @@ class MotorImageryDataset(EEGDataset):
             classes = []
             for j, index in enumerate(idxs):
                 try:
-                    # print(index)
-                    # type_e = events_type[0, index+1]
-                    # class_e = self.mi_types[type_e]
-                    # if type_e == 1023:
-                    #     continue
-                    # classes.append(self.labels_string2int[class_e])
+                    if j >= len(trial_labels):
+                        continue
+            
                     classes.append(trial_labels[j])
-    
+            
                     start = events_position[0, index]
                     stop = start + events_duration[0, index]
                     trial = raw[:22, start+500 : stop-375]
-                    #add band-pass filter
-                    # self.bandpass_filter(trial, lowcut=4, highcut=40, fs=250, order=5)
                     trials.append(trial)
+            
                 except:
-                    # print("Cannot load trial")
                     continue
+
             return trials, classes
     def map2pret(self, data):
         """
@@ -236,12 +231,14 @@ class MotorImageryDataset(EEGDataset):
         return np.matmul(self.P, data) # 22x22, 22xTime
         
     def get_labels(self, sub_id):
-        """
-        Return array of labels for a given subject
-        """
         events_type = self.data_all[sub_id]['etyp'].T
-        trial_labels = [self.labels_string2int[self.mi_types[event]] for event in events_type[0] if event in self.mi_types]
+        trial_labels = [
+            self.labels_string2int[self.mi_types[event]]
+            for event in events_type[0]
+            if event in self.mi_types
+        ]
         return np.array(trial_labels)
+
         
     def get_trials_all(self):
         """
